@@ -10,13 +10,13 @@ import com.github.shawnliang.service.IHelloService;
  * @author : Phoebe
  * @date : Created in 2020/3/31
  */
-@RpcService(value = IHelloService.class, version = "v1.0.0")
-public class IHelloServiceImpl implements IHelloService {
+@RpcService(value = IHelloService.class, version = "v2.0.0")
+public class IHelloServiceImplV2 implements IHelloService {
 
   @Override
   public String sayHello(String content) {
-    System.out.println("say hello "+ content + "v1.0.0");
-    return "say hello "+ content + "v1.0.0";
+    System.out.println("say hello "+ content+"v2.0.0");
+    return "say hello "+ content+"v2.0.0";
   }
 
   @Override

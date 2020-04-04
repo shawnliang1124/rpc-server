@@ -16,6 +16,19 @@ public class RpcRequest implements Serializable {
 
   private Object[] params;
 
+  private String version;
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+
+
+
   public String getClassName() {
     return className;
   }

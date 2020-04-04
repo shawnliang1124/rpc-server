@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.Map;
+import org.springframework.util.StringUtils;
 
 /**
  * Description :   .
@@ -17,16 +19,17 @@ public class ProcessorHandler implements Runnable{
 
   private Socket socket;
 
-  private Object service;
+  private Map<String,Object> map;
 
-  public ProcessorHandler(Socket socket, Object service) {
+  public ProcessorHandler(Socket socket, Map<String,Object> map) {
     this.socket = socket;
-    this.service = service;
+    this.map = map;
   }
 
   @Override
   public void run() {
     try(ObjectInputStream objectInputStream =  new ObjectInputStream(socket.getInputStream());ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())){
+
       RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
       Object result = invoke(rpcRequest);
       objectOutputStream.writeObject(result);
@@ -42,13 +45,26 @@ public class ProcessorHandler implements Runnable{
    * @return
    */
   private Object invoke(RpcRequest rpcRequest) throws Exception {
+    // 反射调用
+    String fullName;
+    String className = rpcRequest.getClassName();
+    fullName = className;
+    String version = rpcRequest.getVersion();
+    if (!StringUtils.isEmpty(version)) {
+      fullName += "-" + version;
+    }
+    Object serviceBean = map.get(fullName);
+    if (serviceBean == null) {
+       throw new RuntimeException("service not found:"+ fullName);
+    }
+
     Object[] params = rpcRequest.getParams();
     Class<?>[] types = new Class[params.length];
     for (int i = 0; i < params.length; i++) {
       types[i] = params[i].getClass();
     }
-    Class<?> clazz = Class.forName(rpcRequest.getClassName());
+    Class<?> clazz = Class.forName(className);
     Method method = clazz.getMethod(rpcRequest.getMethodName(), types);
-    return method.invoke(service, params);
+    return method.invoke(serviceBean, params);
   }
 }

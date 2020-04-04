@@ -1,7 +1,9 @@
 package com.github.shawnliang;
 
+import com.github.shawnliang.config.SpringConfig;
 import com.github.shawnliang.proxy.RpcProxyServer;
 import com.github.shawnliang.service.impl.IHelloServiceImpl;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Description :   .
@@ -12,9 +14,13 @@ import com.github.shawnliang.service.impl.IHelloServiceImpl;
 public class App {
 
   public static void main(String[] args) {
-    IHelloServiceImpl helloService = new IHelloServiceImpl();
-    RpcProxyServer rpcProxyServer = new RpcProxyServer();
-    rpcProxyServer.publish(8080, helloService);
+//    IHelloServiceImpl helloService = new IHelloServiceImpl();
+////    RpcProxyServer rpcProxyServer = new RpcProxyServer();
+////    rpcProxyServer.publish(8080, helloService);
+
+    AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(
+        SpringConfig.class);
+    annotationConfigApplicationContext.start();
   }
 
 }
